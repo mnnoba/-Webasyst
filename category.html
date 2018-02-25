@@ -1,0 +1,102 @@
+   <div id="left_block">
+  <h4>Каталог товаров</h4>
+      <!-- category tree -->
+     <div class="cpt_category_tree">  
+    {if isset($category)}{$selected_category=$category.id}{else}{$selected_category=null}{/if}
+{wa_print_tree tree=$wa->shop->categories(0, null, true) selected=$selected_category unfolded=false class="menu-v category-tree" elem ='<a href=":url" title=":name">:name</a>'}
+
+	</div> 
+	
+	<!-- filtering by product features -->    
+    {if !empty($filters)}
+	            <form method="get" action="">
+        {foreach $filters as $fid => $filter}            
+            {if $fid == 'price'}
+                {$c = $wa->shop->currency(true)}
+				<h3>[`Price`] </h3>
+                <div class="cena-filt">
+                [`from`] <input type="text" name="price_min" {if $wa->get('price_min')}value="{(int)$wa->get('price_min')}"{/if} placeholder="0">
+                [`to`] <input type="text" name="price_max" {if $wa->get('price_max')}value="{(int)$wa->get('price_max')}"{/if} placeholder="&infin;"> {$c.sign}</div>
+            {else}
+                <div class="filt"><h3>{$filter.name|escape}</h3>
+				<ul class="{$filter.code}">
+                {foreach $filter.values as $v_id => $v}
+                    <li><label class="change_checkbox">
+                        <input type="checkbox" name="{$filter.code}[]" {if in_array($v_id, (array)$wa->get($filter.code, array()))}checked{/if} value="{$v_id}"> {$v}
+                    </label></li>
+                {/foreach}</ul></div>
+            {/if}
+            
+        {/foreach}
+            <input type="submit" class="subm" value="[`Filter products`]">
+        </form>    
+    {/if} 
+	<!-- plugin hook: 'frontend_category' -->
+    {* @event frontend_category.%plugin_id% *}
+    {foreach $frontend_category as $_}{$_}{/foreach}     
+	<h4>Мы принимаем</h4>
+      <div class="payment_block"> <a href="#"><img src="{$wa_theme_url}pics/pay_01.png" alt=""></a> <a href="#"><img src="{$wa_theme_url}pics/pay_02.png" alt=""></a> <a href="#"><img src="{$wa_theme_url}pics/pay_06.png" alt=""></a> 
+	  
+	  </div>
+
+<!-- tag cloud -->
+{if $cloud = $wa->shop->tags()}
+    <hr>
+    <div class="tags align-center">
+        {foreach $cloud as $tag}
+            <a href="{$wa_app_url}tag/{$tag.uri_name}/" style="font-size: {$tag.size}%; opacity: {$tag.opacity}">{$tag.name|escape}</a>
+        {/foreach}
+    </div>
+{/if}
+	<h4>Контакты</h4>
+    <div class="contacts">
+    	<p>г. Москва, ул.Академика Королева, д. 115<br>кор.3 ТЦ"Эврика" <br>+7 (499) 000-00-00</p>
+        <p>E-mail: admin@site.ru <br> Skype: MagazinMarket
+    </div>
+    <div class="banners"><!-- место для вставки счетчиков -->
+    	счетчики
+		<!-- конец блока для счетчиков -->
+    </div>   
+    </div>
+
+      <div id="center_wrap">
+      <div class="cpt_maincontent">	
+	
+   <h1 class="category-name">
+        {$category.name|escape}
+    </h1>  
+	<div class="select-view">
+      <div>Отображать</div>
+      <span class="thumbs selected"><i class="icon-th"></i></span>
+      <span class="list "><i class="icon-th-list"></i></span>
+    </div>  
+<!-- description -->
+    {if $category.description}
+        <div class="about_category">{$category.description}</div>
+    {/if}
+	
+	<!-- subcategories -->
+    {if $category.subcategories}
+	<div class="links">
+            {foreach $category.subcategories as $sc}
+               <a href="{$sc.url}">{$sc.name|escape}</a> |
+            {/foreach}
+    </div>
+    {/if}
+    {if !$products}
+        {if !empty($filters)}
+            [`No products were found.`]
+        {else}
+            [`This category does not contain any products.`]
+        {/if}
+    {else}	
+        
+        {include file='list-thumbs.html' sorting=!empty($category.params.enable_sorting)}
+        
+    {/if}
+	
+    {*
+        or use the line below to change product list view
+        {include file='list-table.html' sorting=!empty($category.params.enable_sorting)}
+    *}
+        </div></div>

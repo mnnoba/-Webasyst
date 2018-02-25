@@ -1,0 +1,43 @@
+<div id="left_block">
+  <h4>Каталог товаров</h4>
+      <!-- category tree -->
+	<div class="cpt_category_tree">  
+    {if isset($category)}{$selected_category=$category.id}{else}{$selected_category=null}{/if}
+{wa_print_tree tree=$wa->shop->categories(0, null, true) selected=$selected_category unfolded=false class="menu-v category-tree" elem ='<a href=":url" title=":name">:name</a>'}
+
+	</div> 
+	
+      <h4>Хиты продаж</h4>
+	  {$bestsellers = $wa->shop->productSet('bestsellers')}
+    {if $bestsellers}
+      <div class="cpt_product_lists">
+        {include file="list-table.html" products=$bestsellers}
+        <div class="clear"></div>
+      </div>
+    {/if}
+      
+      <h4>Мы принимаем</h4>
+      <div class="payment_block"> <a href="#"><img src="{$wa_theme_url}pics/pay_01.png" alt=""></a> <a href="#"><img src="{$wa_theme_url}pics/pay_02.png" alt=""></a> <a href="#"><img src="{$wa_theme_url}pics/pay_06.png" alt=""></a> 
+	  
+	  </div>
+	  
+<h4>Контакты</h4>
+    <div class="contacts">
+    	<p>г. Москва, ул.Академика Королева, д. 115<br>кор.3 ТЦ"Эврика" <br>+7 (499) 000-00-00</p>
+        <p>E-mail: admin@site.ru <br> Skype: MagazinMarket
+    </div>
+    
+<!-- tag cloud -->
+{if $cloud = $wa->shop->tags()}
+    <div class="tags align-center">
+        {foreach $cloud as $tag}
+            <a href="{$wa_app_url}tag/{$tag.uri_name}/" style="font-size: {$tag.size}%; opacity: {$tag.opacity}">{$tag.name|escape}</a>
+        {/foreach}
+    </div>
+{/if}
+<div class="banners">
+	<!-- место для вставки счетчиков -->
+    	счетчики
+    <!-- конец блока для счетчиков -->
+    </div>
+</div>

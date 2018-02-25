@@ -1,0 +1,9 @@
+{include file="sidebar.html"}
+<div id="center_wrap">
+<div class="cpt_maincontent">
+    <h1>{$page.title}</h1>
+    <div id="page" role="main">
+        {$page.content}
+		{$wa->block("blog.posts")}
+    </div>
+</div></div>

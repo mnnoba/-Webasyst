@@ -1,0 +1,57 @@
+{include file="sidebar.html"}	
+<div id="center_wrap">
+      <div class="cpt_maincontent">	
+	  
+<!--CLIDER -->
+<div id="slider">
+            <div class="arrow_1"></div>
+            <div class="arrow_2"></div>
+              <div class="overflow">{$promos = $wa->shop->productSet('promo')}
+    {if $promos && count($promos)}
+              <ul class="list">{foreach $promos as $p}
+                <li class="item"><a href="{$p.frontend_url}" title="{$p.name}{if $p.summary} &ndash; {strip_tags($p.summary)|escape}{/if}">
+				<div class="img">{$badge_html = $wa->shop->badgeHtml($p.badge)}
+                        {$wa->shop->productImgHtml($p, '350', ['itemprop' => 'image', 'alt' => $p.name, 'default' => "`$wa_theme_url`img/dummy200.png"])}
+              </div>
+                  <div class="text">
+                    <div class="head">
+                        <span class="name">{$p.name|truncate:50}</span>
+                    </div>
+					
+                    <div class="head2">
+					{if $p.compare_price > 0}<span class="compare-at-price nowrap"> {shop_currency($p.compare_price)} </span>{/if}
+                    <p class="purchase"><span class="price nowrap">{shop_currency($p.price)}</span></p></div>
+                    <div class="head3">{if $p.summary}<p itemprop="description">{strip_tags($p.summary)|truncate:160}</p>{/if}
+					</div>
+                
+                  </div>
+                </a></li>{/foreach}
+				</ul>{/if}
+</div></div>
+<!--CLIDER END -->
+
+        <div class="text_block">
+        	<h3>Интернет-магазин Гипермаркет.</h3>
+        	<p>Если Вы используете струйный принтер и хотели бы снизить затраты, наш интернет магазин предлагает приобрести 
+систему бесперебойной подачи чернил и забыть о трудностях и дороговизне связанных с печатью. Данная система 
+представляет собой совокупность приспособлений, позволяющих сделать домашнюю и офисную печать совершенно 
+доступной. Бесперебойная подача чернил состоит из трёх основных элементов: резервуаров, картриджей и 
+силиконового шлейфа. Такая конструкция позволяет подавать краску из перезаполняемого резервуара, без 
+использования сменных систем.</p>
+			<p>Для обеспечения совместимости с принтерами в систему бесперебойной подачи встроены специальные чипы, 
+обнуляющие показания датчика чернил. У нас можно приобрести системы, позволяющие заменить 100 стандартных 
+картриджей. </p>
+        </div>
+		
+		<h3>Новинки</h3>  
+              <div class="cpt_product_lists"> 
+                  {$promos = $wa->shop->productSet('news')}
+{if $promos && count($promos)}
+              {include file="list-table.html" products=$promos}
+{/if}	
+               </div>
+                     
+<!-- plugin hook: 'frontend_homepage' -->
+{* @event frontend_homepage.%plugin_id% *}
+{foreach $frontend_homepage as $_}{$_}{/foreach}
+</div></div>

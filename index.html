@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>{$wa->title()|escape}</title>
+    <meta name="Keywords" content="{$wa->meta('keywords')|escape}" />
+    <meta name="Description" content="{$wa->meta('description')|escape}" />
+    
+    <!-- css -->
+    <link href="{$wa_theme_url}zed.css?{$wa->version()}" rel="stylesheet" type="text/css">
+    <link href="{$wa_theme_url}mobile.css?{$wa->version()}" media="screen and (max-width: 760px)" rel="stylesheet" type="text/css">
+    {if $wa->isMobile()}
+        <meta name="viewport" content="width=device-width; initial-scale=1; maximum-scale=1; user-scalable=0;">
+    {/if}
+    {$wa->css()} {* links active plugins CSS *}
+    
+    <!-- js -->
+<!--<script src="{$wa_theme_url}js/jquery.min.js" type="text/javascript"></script>-->
+<!--[if lte IE 8]>
+<link rel="stylesheet" type="text/css" href="{$wa_theme_url}css/style_ie.css">
+<![endif]-->
+<script type="text/javascript" src="{$wa_url}wa-content/js/jquery/jquery-1.8.2.min.js"></script>
+<script src="{$wa_theme_url}js/script.js" type="text/javascript"></script> 
+<script type="text/javascript" src="{$wa_theme_url}view.js"></script>
+<script type="text/javascript" src="{$wa_url}wa-content/js/jquery-wa/wa.core.js"></script>    
+    <script type="text/javascript" src="{$wa_theme_url}default.js"></script>
+    <script type="text/javascript" src="{$wa_theme_url}lazyloading.js"></script>
+    {if !empty($nofollow)}
+        <meta name="robots" content="noindex,nofollow" />
+    {/if}
+    <script type="text/javascript" src="{$wa_app_static_url}js/lazy.load.js?v={$wa->version()}"></script>
+    {$wa->js()} {* links active plugins JS *}
+
+    <!-- plugin hook: 'frontend_head' -->
+    {* @event frontend_head.%plugin_id% *}
+    {foreach $frontend_head as $_}{$_}{/foreach}
+
+    {$wa->headJs()} {* links Google Analytics tracking code and current site's custom JS (Site app) *}
+	 
+</head>
+<body>
+<div id="back-top" style="display: block;">
+<a href="#top"></a>
+</div>
+<!--  BODY --> 
+<div class="cpt_datas"><div class="wrap">
+        <div class="feed"><ul id="wa-apps">
+		{foreach from=$wa->apps() item=a}
+                    <li {if $a.url==$wa_app_url}class="selected"{/if}><a href="{$a.url}">{$a.name}</a></li>
+                {/foreach}
+		</ul></div>
+{if $wa->isAuthEnabled()}	 
+      <div class="cpt_divisions_navigation">
+        <ul>
+          {if $wa->user()->isAuth()}
+            <li><a href="?logout">[s`Log out`]</a></li>
+            <li><a href="{$wa_url}my">{$wa->user('name')|truncate:12}</a></li>
+          {else}
+            <li><a href="{$wa->signupUrl()}">[s`Sign up`]</a></li>
+            <li><a href="{$wa->loginUrl()}">[s`Log in`]</a></li>
+          {/if}</ul>
+      </div>    
+        {/if}
+        
+	{$cart_total = $wa->shop->cart->total()}
+            <div class="cpt_shopping_cart_info">
+      <div class="shcart_link">
+                <a href="{$wa->getUrl('/frontend/cart')}">[`My shopping cart`]</a></div>
+                <div id="shpcrtca"><strong class="price nowrap cart-total">{shop_currency($cart_total, true)}</strong></div>
+            </div>	 	
+		</div>
+</div>		
+
+    <div id="header"><div class="wrap">			
+	<!-- логотип -->
+          <a href="{$wa_url}"><img src="{$wa_theme_url}images/logo.png" alt="" class="logo"></a>
+          
+		<div class="phone_block">
+        	<span>+7 (499) 222-33-44</span>     
+        </div>
+        <div class="work_days">C 8-00 до 19-00. Сб.Вс - выходной.</div>
+		  <div class="raspis"><span>Быстрая доставка</span><br>по всей России</div>	
+	  
+        <div class="cpt_auxpages_navigation"><!-- info pages -->
+    {$shop_pages=$wa->shop->pages()}
+    {if $shop_pages}
+        {wa_print_tree tree=$shop_pages  elem ='
+    <a href=":url" title=":title">:name</a>' selected=$wa->param('page_id')}
+    {/if}
+  </div>
+		
+		<div class="cpt_product_search">
+	<form method="get" action="{$wa->getUrl('/frontend/search')}">
+                <input type="search" class="input_message" name="query" {if !empty($query)}value="{$query}"{/if} id="search" placeholder="[`Find products`]">
+				<input type="submit" value=" ">
+                </form></div>	
+    </div> </div>
+<div id="wrap">
+	<div id="content">	
+  
+<!-- plugin hook: 'frontend_nav' -->
+        {* @event frontend_nav.%plugin_id% *}
+{$content}
+
+</div>
+</div>
+
+<div class="f_wrap">
+<div id="footer">
+        
+        <div class="cpt_divisions_navigation"><!-- info pages -->
+    {$shop_pages=$wa->shop->pages()}
+    {if $shop_pages}
+        {wa_print_tree tree=$shop_pages attrs = 'id="page-list"' elem ='
+    <a href=":url" title=":title">:name</a>' selected=$wa->param('page_id')}
+    {/if}
+	
+  </div>
+        <div class="copyright">Copyright &copy; 2013 Дизайн <a href="http://zed-site.ru">ZDesign Studio</a>
+		{if count($currencies) > 1}
+                    <select id="currency" class="currency-toggle">
+                        {$currency = $wa->shop->currency()}
+                        {foreach $currencies as $c_code => $c}
+                            <option value="{$c_code}" {if $c_code == $currency} selected{/if}>{$c.title}</option>
+                        {/foreach}
+                    </select>
+                    <script>
+                        $("#currency").change(function () {
+                            var url = location.href;
+                            if (url.indexOf('?') == -1) {
+                                url += '?';
+                            } else {
+                                url += '&';
+                            }
+                            location.href = url + 'currency=' + $(this).val();
+                        });
+                    </script>
+                {/if}
+		</div>
+		<!-- plugin hook: 'frontend_footer' -->
+                {* @event frontend_footer.%plugin_id% *}
+                {foreach $frontend_footer as $_}{$_}{/foreach}
+</div>
+</div>
+</body>
+</html>

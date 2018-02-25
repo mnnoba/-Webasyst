@@ -1,0 +1,9 @@
+{include file="sidebar.html"}
+<div id="center_wrap">
+      <div class="cpt_maincontent">	
+    <div id="page" role="main">
+        <h1>[`Login`]</h1>
+        {$wa->authAdapters()}
+        {$wa->loginForm($error, empty($without_form))}
+    </div>
+</div></div>

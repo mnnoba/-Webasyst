@@ -1,0 +1,25 @@
+{include file="sidebar.html"}
+	
+<div id="center_wrap">
+      <div class="cpt_maincontent">	
+<h1>
+        {$title}
+    </h1>
+    
+    <!-- plugin hook: 'frontend_search' -->
+    {* @event frontend_search.%plugin_id% *}
+    {foreach $frontend_search as $_}{$_}{/foreach}
+
+    {if !$products}
+        [`No products were found.`]
+    {else}
+        <div id="main_catalog">
+        <div class="cpt_product_lists">
+            {include file='list-thumbs.html'}
+        </div></div>
+        {*
+            or use the line below if you want plain table view instead of thumbs
+            {include file='list-thumbs.html'}
+        *}
+    {/if}
+</div></div>

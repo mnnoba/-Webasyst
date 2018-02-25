@@ -1,0 +1,53 @@
+{if !empty($sorting)}
+    <!-- sorting -->
+    {$sort_fields = ['rating' => '[`Customer rating`]', 'total_sales' => '[`Bestsellers`]', 'price' => '[`Price`]', 'name' => '[`Name`]', 'create_datetime'=>'[`Date added`]', 'stock' => '[`In stock`]']}
+    {if !isset($active_sort)}
+        {$active_sort = $wa->get('sort', 'create_datetime')}
+    {/if}
+    <ul class="menu-h sorting">
+        <li>[`Sort by`]:</li>
+        {if !empty($category) && !$category.sort_products}
+            <li{if !$active_sort} class="selected"{/if}><a href="{$wa->currentUrl(0, 1)}">[`New & Popular`]</a></li>
+        {/if}
+        {foreach $sort_fields as $sort => $name}
+            <li{if $active_sort == $sort} class="selected"{/if}>{$wa->shop->sortUrl($sort, $name)}</li>
+            {if $wa->get('sort') == $sort}{$wa->title( $wa->title()|cat:' — '|cat:$name)}{/if}
+        {/foreach}
+    </ul>
+{/if}
+
+<ul class="product_list">
+{foreach $products as $p}
+    <li class="item" itemscope itemtype ="http://schema.org/Product">
+        <div class="img">
+                <a href="{$p.frontend_url}" title="{$p.name}{if $p.summary} &mdash; {strip_tags($p.summary)}{/if}">                    
+                    {$wa->shop->productImgHtml($p, '160', ['itemprop' => 'image', 'alt' => $p.name])}
+                </a>
+            </div>
+       <div class="name" itemprop="name">
+                <a href="{$p.frontend_url}" title="{$p.name}{if $p.summary} &mdash; {strip_tags($p.summary)}{/if}">{$p.name|truncate:30}</a>                
+            </div>
+           <div class="price">
+            {if $p.compare_price > 0}<span class="compare"> {shop_currency($p.compare_price)} </span><br>{/if}
+            <span class="total" itemprop="price">{shop_currency($p.price)}</span></div>
+            {if $wa->shop->settings('ignore_stock_count') || $p.count === null || $p.count > 0}
+            <form class="addtocart" method="post" action="{$wa->getUrl('/frontendCart/add')}">
+                <input type="hidden" name="product_id" value="{$p.id}">
+                <input class="add2cart_handler" type="submit" value="">
+				 <span class="added2cart" style="display: none;">{sprintf('[`%s is now <a href="%s"><strong>in your shopping cart</strong></a>`]', $p.name, $wa->getUrl('shop/frontend/cart'))}</span>
+            </form>
+			<link itemprop="availability" href="http://schema.org/InStock" />
+            {else}
+				<div class="out-of-stock"><strong>[`Out of stock`]</strong></div>
+                <link itemprop="availability" href="http://schema.org/OutOfStock" />
+			{/if}
+        </li>
+    
+{/foreach}
+</ul>
+
+{if isset($pages_count) && $pages_count > 1}
+<div class="block lazyloading-paging">
+    {wa_pagination total=$pages_count attrs=['class' => "menu-h"]}
+</div>
+{/if}
